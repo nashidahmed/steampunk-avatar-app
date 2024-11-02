@@ -2,20 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  color: var(--foreground);
-  background: var(--background);
+  background-color: #d4c2a4; /* Base beige background color */
+  background-image: radial-gradient(
+      circle,
+      rgba(0, 0, 0, 0.3),
+      rgba(0, 0, 0, 0.6)
+    ),
+    /* Vignette shadow */
+      radial-gradient(circle, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    /* Grid pattern */
+      radial-gradient(circle, rgba(0, 0, 0, 0.1) 1px, transparent 1px); /* Additional grid pattern */
+  background-size: 100% 100%, 40px 40px, 40px 40px; /* Size of each layer */
+  background-position: center, 20px 20px, 20px 20px; /* Positioning for each layer */
+  color: #333; /* Text color for steampunk style */
   font-family: Arial, Helvetica, sans-serif;
 }

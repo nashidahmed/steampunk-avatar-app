@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss"
 
 const config: Config = {
   content: [
@@ -8,12 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        cyberpunk:
+          "0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 100, 0, 0.3), inset 0 0 20px rgba(255, 0, 255, 0.3)",
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        "steampunk-bronze": "rgba(130, 82, 1, 0.7)", // Steampunk-inspired bronze border color
       },
     },
   },
   plugins: [],
-};
-export default config;
+}
+export default config
