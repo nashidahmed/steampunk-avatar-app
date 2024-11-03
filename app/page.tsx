@@ -8,8 +8,6 @@ import MetaMaskConnect from "./components/MetamaskConnect";
 import { createMetadata } from "./utils/createMetadata";
 import { mintNFT } from "./utils/mintNFT";
 import { uploadToIpfs } from "./utils/uploadToIpfs";
-import { url } from "inspector";
-import { metadata } from "./layout";
 
 export default function Home() {
   const [minting, setMinting] = useState(false);
@@ -59,6 +57,7 @@ export default function Home() {
       name: "Steampunk NFT",
       description: "This Steampunk NFT was generated at HackNJIT",
       image: imageUrl,
+      attributes: [],
     };
 
     try {
@@ -92,13 +91,15 @@ export default function Home() {
             {loading ? (
               <div>Loading...</div>
             ) : (
-              <img
-                className="w-72 h-auto rounded"
-                src={imageUrl}
-                alt="Cyberpunk Avatar"
-                width={64}
-                height={38}
-              />
+              imageUrl && (
+                <img
+                  className="w-72 h-auto rounded"
+                  src={imageUrl}
+                  alt="Cyberpunk Avatar"
+                  width={64}
+                  height={38}
+                />
+              )
             )}
           </div>
           <div className="flex flex-1 flex-col w-fit">
