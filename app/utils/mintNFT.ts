@@ -17,7 +17,9 @@ export const mintNFT = async (metadataUrl: string) => {
     const contractAddress = process.env.NEXT_PUBLIC_ETH_SMART_CONTRACT || ""; // Replace with your contract address
     const contract = new Contract(contractAddress, SteampunkMinter.abi, signer);
 
-    const tx = await contract.mintNFT(await signer.getAddress(), metadataUrl);
+    const tx = await contract.mintNFT(await signer.getAddress(), metadataUrl, {
+      gasLimit: 300000, // Example value; adjust as needed
+    });
     await tx.wait();
     console.log("NFT minted successfully");
   } catch (error: any) {
