@@ -1,6 +1,11 @@
 "use client";
 
 import axios from "axios";
+import { Contract, BrowserProvider } from "ethers";
+import MetaMaskConnect from "./components/MetamaskConnect";
+import { createMetadata } from "./utils/createMetadata";
+import { mintNFT } from "./utils/mintNFT";
+import { uploadToIpfs } from "./utils/uploadToIpfs";
 import { ethers } from "ethers";
 import { useState, useRef, useEffect } from "react";
 
@@ -36,6 +41,7 @@ export default function Home() {
   const [status, setStatus] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [file, setFile] = useState<File>();
   const [inputValues, setInputValues] = useState({
     firstInput: "",
     secondInput: "",
@@ -166,9 +172,10 @@ export default function Home() {
     }
   }, [filteredSuggestions]);
 
-  const getImage = async (e) => {
+  const getImage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setStatus("");
 
     const prompt = `Generate a steampunk-themed avatar in a 
     ${inputValues.firstInput || "realistic"}
@@ -194,7 +201,7 @@ export default function Home() {
 
     console.log(prompt);
     const response = await fetch(
-      process.env.NEXT_PUBLIC_HUGGING_FACE_BASE_URL || "",
+      "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
       {
         headers: {
           Authorization: process.env.NEXT_PUBLIC_HUGGING_FACE_API_KEY || "",
@@ -206,96 +213,95 @@ export default function Home() {
     );
     const result = await response.blob();
     const url = URL.createObjectURL(result);
+    const file = new (File as any)([result], "Steampunk NFT", {
+      type: result.type,
+    });
+
+    console.log(file);
+
+    setFile(file);
     setLoading(false);
     setImageUrl(url);
-  };
-
-  // Step 1: Upload Image to IPFS
-  const uploadImageToIPFS = async (imageFile: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append("file", imageFile);
-
-    const response = await axios.post(
-      process.env.NEXT_PUBLIC_PINATA_BASE_URL || "",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY!,
-          pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY!,
-        },
-      }
-    );
-
-    return `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
-  };
-
-  // Step 2: Create Metadata JSON and Upload to IPFS
-  const createMetadata = async (imageUrl: string): Promise<string> => {
-    const metadata = {
-      name: "My NFT",
-      description: "This is an NFT with an image",
-      image: imageUrl,
-    };
-
-    const response = await axios.post(
-      process.env.NEXT_PUBLIC_PINATA_BASE_URL || "",
-      metadata,
-      {
-        headers: {
-          pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY!,
-          pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY!,
-        },
-      }
-    );
-
-    return `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
-  };
-
-  // Step 3: Mint the NFT
-  const mintNFT = async (metadataUrl: string) => {
-    if (!window.ethereum) {
-      alert("Please install MetaMask");
-      return;
-    }
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-
-    const contractAddress = "your_contract_address"; // Replace with your contract address
-    const contract = new ethers.Contract(
-      contractAddress,
-      MyNFTMinter.abi,
-      signer
-    );
-
-    const tx = await contract.mintNFT(await signer.getAddress(), metadataUrl);
-    await tx.wait();
-    setStatus("NFT Minted Successfully!");
   };
 
   // Combine steps to handle the minting process
   const handleMint = async () => {
     if (!file) {
-      alert("Please upload an image file.");
+      alert("Image not generated");
       return;
     }
 
     setMinting(true);
     setStatus("Uploading image to IPFS...");
 
+    const metadata = {
+      name: "Steampunk NFT",
+      description: "This Steampunk NFT was generated at HackNJIT",
+      image: imageUrl,
+      attributes: [
+        {
+          trait_type: "Theme",
+          value: inputValues.firstInput || "realistic",
+        },
+        {
+          trait_type: "Face",
+          value: inputValues.secondInput || "giraffe",
+        },
+        {
+          trait_type: "Facial Features",
+          value: inputValues.thirdInput || "beard",
+        },
+        {
+          trait_type: "Face direction",
+          value: inputValues.fourthInput || "right",
+        },
+        {
+          trait_type: "Apparel",
+          value: inputValues.fifthInput || "goggles",
+        },
+        {
+          trait_type: "Emotion",
+          value: inputValues.sixthInput || "sad",
+        },
+        {
+          trait_type: "Eye color",
+          value: inputValues.sevenInput || "deep blue",
+        },
+        {
+          trait_type: "Eyes expression",
+          value: inputValues.eightInput || "expressing melancholy",
+        },
+        {
+          trait_type: "Steampunk element 1",
+          value: inputValues.ninthInput || "metallic gears",
+        },
+        {
+          trait_type: "Steampunk element 2",
+          value: inputValues.tenthInput || "pipes",
+        },
+        {
+          trait_type: "Background style",
+          value: inputValues.elevenInput || "Victorian-era styled",
+        },
+        {
+          trait_type: "Background location",
+          value: inputValues.twelveInput || "industrial complex",
+        },
+        {
+          trait_type: "lighting",
+          value: inputValues.thirteenInput || "dim",
+        },
+      ],
+    };
+
     try {
-      // Step 1: Upload the image to IPFS
-      const imageUrl = await uploadImageToIPFS(file);
+      const metadataURL = await uploadToIpfs(file, metadata);
+      console.log("Metadata URL:", metadataURL);
 
-      // Step 2: Create metadata and upload to IPFS
-      setStatus("Creating metadata...");
-      const metadataUrl = await createMetadata(imageUrl);
-
-      // Step 3: Mint the NFT with the metadata URL
       setStatus("Minting NFT on Polygon...");
-      await mintNFT(metadataUrl);
+      await mintNFT(metadataURL || "");
+
+      setStatus("Successfully minted");
     } catch (error) {
       console.error("Error minting NFT:", error);
       setStatus("Error minting NFT. Check console for details.");
@@ -353,8 +359,12 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-items-center min-h-screen p-8 pb-20 gap-16">
-      <header className="text-8xl font-[family-name:var(--font-wake-snake)] mt-3">
-        Steampunk Avatar
+      <header className="mt-3 flex flex-col">
+        <div className="text-8xl font-[family-name:var(--font-wake-snake)]">
+          Steampunk Avatar
+        </div>
+
+        <MetaMaskConnect />
       </header>
       <main className="flex flex-col w-full gap-8 row-start-2 items-center">
         <div className="flex w-full">
@@ -362,15 +372,17 @@ export default function Home() {
             {loading ? (
               <div className="white">Loading...</div>
             ) : (
-              <img
-                className="h-auto rounded"
-                src={imageUrl}
-                alt="Cyberpunk Avatar"
-                height="full"
-              />
+              imageUrl && (
+                <img
+                  className="h-auto rounded"
+                  src={imageUrl}
+                  alt="Cyberpunk Avatar"
+                  height="full"
+                />
+              )
             )}
           </div>
-          <div className="flex flex-1 flex-col min-w-96 ml-28">
+          <div className="flex flex-1 flex-col min-w-96 ml-28 items-center">
             <form
               className="space-y-4 p-4 border rounded-md flex flex-col"
               onSubmit={getImage}
@@ -496,11 +508,25 @@ export default function Home() {
             >
               Download
             </button> */}
+            <a
+              href={imageUrl}
+              download={"Steampunk NFT.jpg"}
+              className="mt-4 px-6 py-2 w-fit rounded-lg bg-steampunk-bronze text-gray-800 font-bold border border-gray-600 hover:bg-gray-800 hover:text-steampunk-bronze transition-colors duration-200 ease-in-out shadow-cyberpunk focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            >
+              Download image
+            </a>
+            <button
+              className="mt-4 px-6 py-2 w-fit rounded-lg bg-steampunk-bronze text-gray-800 font-bold border border-gray-600 hover:bg-gray-800 hover:text-steampunk-bronze transition-colors duration-200 ease-in-out shadow-cyberpunk focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              onClick={handleMint}
+            >
+              Mint as NFT
+            </button>
+            {status}
           </div>
         </div>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        Testing
+        Made at HackNJIT
       </footer>
     </div>
   );
