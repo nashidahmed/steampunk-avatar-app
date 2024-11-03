@@ -2,14 +2,13 @@
 
 import axios from "axios";
 import { ethers } from "ethers";
-import Image from "next/image";
 import { useState } from "react";
 
 export default function Home() {
   const [minting, setMinting] = useState(false);
   const [status, setStatus] = useState<string>("");
   const [prompt, setPrompt] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
 
   const getImage = async () => {
@@ -18,7 +17,7 @@ export default function Home() {
       process.env.NEXT_PUBLIC_HUGGING_FACE_BASE_URL || "",
       {
         headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_HUGGING_FACE_API_KEY}`,
+          Authorization: process.env.NEXT_PUBLIC_HUGGING_FACE_API_KEY || "",
           "Content-Type": "application/json",
         },
         method: "POST",
@@ -27,6 +26,7 @@ export default function Home() {
     );
     const result = await response.blob();
     const url = URL.createObjectURL(result);
+    setLoading(false);
     setImageUrl(url);
   };
 
@@ -135,13 +135,12 @@ export default function Home() {
             {loading ? (
               <div>Loading...</div>
             ) : (
-              <Image
+              <img
                 className="w-72 h-auto rounded"
                 src={imageUrl}
                 alt="Cyberpunk Avatar"
                 width={64}
                 height={38}
-                priority
               />
             )}
           </div>
@@ -162,11 +161,11 @@ export default function Home() {
               Generate New Avatar
             </button>
             {/* <button
-          className="mt-4 px-6 py-2 rounded-lg bg-steampunk-bronze text-gray-800 font-bold border border-gray-600 hover:bg-gray-800 hover:text-steampunk-bronze transition-colors duration-200 ease-in-out shadow-lg shadow-cyberpunk focus:outline-none focus:ring-2 focus:ring-cyan-400"
-          onClick={downloadImage}
-        >
-          Download
-        </button> */}
+              className="mt-4 px-6 py-2 rounded-lg bg-steampunk-bronze text-gray-800 font-bold border border-gray-600 hover:bg-gray-800 hover:text-steampunk-bronze transition-colors duration-200 ease-in-out shadow-lg shadow-cyberpunk focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              onClick={downloadImage}
+            >
+              Download
+            </button> */}
           </div>
         </div>
       </main>
