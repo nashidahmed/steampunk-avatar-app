@@ -172,7 +172,7 @@ export default function Home() {
     }
   }, [filteredSuggestions]);
 
-  const getImage = async (e) => {
+  const getImage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setStatus("");

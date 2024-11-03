@@ -1,4 +1,4 @@
-import { BrowserProvider, Contract } from "ethers";
+import { BrowserProvider, Contract, Eip1193Provider } from "ethers";
 import SteampunkMinter from "../artifacts/contracts/SteampunkMinter.json"; // Adjust the path to your ABI
 
 export const mintNFT = async (metadataUrl: string) => {
@@ -8,7 +8,9 @@ export const mintNFT = async (metadataUrl: string) => {
   }
 
   try {
-    const provider = new BrowserProvider(window.ethereum);
+    const provider = new BrowserProvider(
+      window.ethereum as unknown as Eip1193Provider
+    );
     await provider.send("eth_requestAccounts", []);
     const signer = await provider.getSigner();
 
