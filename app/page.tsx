@@ -358,14 +358,15 @@ export default function Home() {
   );
 
   return (
-    <div className="flex flex-col items-center justify-items-center min-h-screen p-8 pb-20 gap-16">
+    <div className="flex flex-col items-center justify-items-center min-h-screen p-8 pb-20 gap-2">
       <header className="mt-3 flex flex-col">
         <div className="text-8xl font-[family-name:var(--font-wake-snake)]">
           Steampunk Avatar
         </div>
-
-        <MetaMaskConnect />
       </header>
+      <div className="w-full">
+        <MetaMaskConnect />
+      </div>
       <main className="flex flex-col w-full gap-8 row-start-2 items-center">
         <div className="flex w-full">
           <div className="flex-1 p-5 max-w-lg items-start bg-gray-900 rounded-lg border-4 border-steampunk-bronze shadow-cyberpunk">
@@ -511,13 +512,16 @@ export default function Home() {
             <a
               href={imageUrl}
               download={"Steampunk NFT.jpg"}
-              className="mt-4 px-6 py-2 w-fit rounded-lg bg-steampunk-bronze text-gray-800 font-bold border border-gray-600 hover:bg-gray-800 hover:text-steampunk-bronze transition-colors duration-200 ease-in-out shadow-cyberpunk focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className={`${
+                !imageUrl && "opacity-40 cursor-none pointer-events-none"
+              } mt-4 px-6 py-2 w-fit rounded-lg bg-steampunk-bronze text-gray-800 font-bold border border-gray-600 hover:bg-gray-800 hover:text-steampunk-bronze transition-colors duration-200 ease-in-out shadow-cyberpunk focus:outline-none focus:ring-2 focus:ring-cyan-400`}
             >
               Download image
             </a>
             <button
-              className="mt-4 px-6 py-2 w-fit rounded-lg bg-steampunk-bronze text-gray-800 font-bold border border-gray-600 hover:bg-gray-800 hover:text-steampunk-bronze transition-colors duration-200 ease-in-out shadow-cyberpunk focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="mt-4 px-6 py-2 w-fit disabled:opacity-40 disabled:cursor-none disabled:pointer-events-none rounded-lg bg-steampunk-bronze text-gray-800 font-bold border border-gray-600 hover:bg-gray-800 hover:text-steampunk-bronze transition-colors duration-200 ease-in-out shadow-cyberpunk focus:outline-none focus:ring-2 focus:ring-cyan-400"
               onClick={handleMint}
+              disabled={!imageUrl}
             >
               Mint as NFT
             </button>
