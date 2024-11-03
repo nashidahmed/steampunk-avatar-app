@@ -53,7 +53,7 @@ export async function uploadToIpfs(
       },
     });
 
-    const metadataURL = `https://${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${imageCid}`;
+    const metadataURL = `https://${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${metadataResult.IpfsHash}`;
 
     return metadataURL;
   } catch (error) {

@@ -2,7 +2,6 @@
 
 import axios from "axios";
 import { Contract, BrowserProvider } from "ethers";
-import MyNFTMinter from "./artifacts/contracts/MyNFTMinter.json";
 import MetaMaskConnect from "./components/MetamaskConnect";
 import { createMetadata } from "./utils/createMetadata";
 import { mintNFT } from "./utils/mintNFT";
@@ -176,6 +175,7 @@ export default function Home() {
   const getImage = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setStatus("");
 
     const prompt = `Generate a steampunk-themed avatar in a 
     ${inputValues.firstInput || "realistic"}
@@ -238,7 +238,60 @@ export default function Home() {
       name: "Steampunk NFT",
       description: "This Steampunk NFT was generated at HackNJIT",
       image: imageUrl,
-      attributes: [],
+      attributes: [
+        {
+          trait_type: "Theme",
+          value: inputValues.firstInput || "realistic",
+        },
+        {
+          trait_type: "Face",
+          value: inputValues.secondInput || "giraffe",
+        },
+        {
+          trait_type: "Facial Features",
+          value: inputValues.thirdInput || "beard",
+        },
+        {
+          trait_type: "Face direction",
+          value: inputValues.fourthInput || "right",
+        },
+        {
+          trait_type: "Apparel",
+          value: inputValues.fifthInput || "goggles",
+        },
+        {
+          trait_type: "Emotion",
+          value: inputValues.sixthInput || "sad",
+        },
+        {
+          trait_type: "Eye color",
+          value: inputValues.sevenInput || "deep blue",
+        },
+        {
+          trait_type: "Eyes expression",
+          value: inputValues.eightInput || "expressing melancholy",
+        },
+        {
+          trait_type: "Steampunk element 1",
+          value: inputValues.ninthInput || "metallic gears",
+        },
+        {
+          trait_type: "Steampunk element 2",
+          value: inputValues.tenthInput || "pipes",
+        },
+        {
+          trait_type: "Background style",
+          value: inputValues.elevenInput || "Victorian-era styled",
+        },
+        {
+          trait_type: "Background location",
+          value: inputValues.twelveInput || "industrial complex",
+        },
+        {
+          trait_type: "lighting",
+          value: inputValues.thirteenInput || "dim",
+        },
+      ],
     };
 
     try {
@@ -329,7 +382,7 @@ export default function Home() {
               )
             )}
           </div>
-          <div className="flex flex-1 flex-col min-w-96 ml-28">
+          <div className="flex flex-1 flex-col min-w-96 ml-28 items-center">
             <form
               className="space-y-4 p-4 border rounded-md flex flex-col"
               onSubmit={getImage}
@@ -473,7 +526,7 @@ export default function Home() {
         </div>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        Testing
+        Made at HackNJIT
       </footer>
     </div>
   );
