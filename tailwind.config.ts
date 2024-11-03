@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
@@ -15,8 +15,11 @@ const config: Config = {
       colors: {
         "steampunk-bronze": "rgba(130, 82, 1, 0.7)", // Steampunk-inspired bronze border color
       },
+      spacing: {
+        lg: "30rem",
+      },
     },
   },
   plugins: [],
-}
-export default config
+};
+export default config;
